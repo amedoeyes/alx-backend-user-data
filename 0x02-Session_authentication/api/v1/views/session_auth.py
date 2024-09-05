@@ -3,7 +3,7 @@
 """Session authentication module"""
 
 
-from flask import request, jsonify
+from flask import request, jsonify, abort
 from api.v1.views import app_views
 from models.user import User
 from os import getenv
@@ -41,3 +41,19 @@ def auth_session_login() -> str:
         else:
             return jsonify(error="wrong password"), 401
     return jsonify(error="no user found for this email"), 404
+
+
+@app_views.route(
+    "/auth_session/logout", methods=["DELETE"], strict_slashes=False
+)
+def auth_session_logout() -> str:
+    """DELETE /api/v1/auth_session/logout
+    Return:
+      - 200 and JSON {}
+    """
+    from api.v1.app import auth
+
+    if auth.destroy_session(request):
+        return jsonify({}), 200
+    abort(404)
+    return None
