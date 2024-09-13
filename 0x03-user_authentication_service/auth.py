@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-"""Auth module"""
-
 import bcrypt
 from db import DB
 from user import User
@@ -50,3 +48,20 @@ class Auth:
         except Exception:
             return False
         return False
+
+    def create_session(self, email: str) -> str:
+        """Create session"""
+        try:
+            user = self._db.find_user_by(email=email)
+            session_id = _generate_uuid()
+            self._db.update_user(user.id, session_id=session_id)
+            return session_id
+        except NoResultFound:
+            return None
+        except ValueError:
+            return None
+        except TypeError:
+            return None
+        except Exception:
+            return None
+        return None
